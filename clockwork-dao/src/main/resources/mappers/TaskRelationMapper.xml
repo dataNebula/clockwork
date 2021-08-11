@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TaskRelationMapper">
+
+    <!-- 查询子节点的父节点 -->
+    <select id="selectChildrenFather" resultType="com.creditease.adx.clockwork.common.entity.RelationChildrenFather">
+        SELECT `task_id` taskId, group_concat(`father_task_id`) fatherTaskIds
+        FROM tb_clockwork_task_relation
+        WHERE is_effective = 1 and task_id is not null
+        GROUP BY task_id
+    </select>
+
+
+    <!-- 查询父节点的子节点 -->
+    <select id="selectFatherChildren" resultType="com.creditease.adx.clockwork.common.entity.RelationFatherChildren">
+        SELECT `father_task_id` fatherTaskId, group_concat(`task_id`) taskIds
+        FROM tb_clockwork_task_relation
+        WHERE is_effective = 1 and father_task_id is not null
+        GROUP BY father_task_id
+    </select>
+
+
+</mapper>

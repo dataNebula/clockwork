@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.DashboardMapper">
+
+    <!-- 查询总任务运行情况 -->
+    <select id="selectTaskTotalRunStatus" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT 'total' status, COUNT(1) cnt
+        from tb_clockwork_task t
+        where 1=1
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        UNION ALL
+        SELECT 'online' status, COUNT(1) cnt
+        from tb_clockwork_task t
+        where t.online=1
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        UNION ALL
+        SELECT t.status , COUNT(1) cnt
+        FROM tb_clockwork_task t
+        WHERE t.online=1
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        GROUP BY t.status
+    </select>
+
+
+    <!-- 查询当天任务运行情况 -->
+    <select id="selectTaskTodayRunStatus" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT 'total' status, COUNT(1) cnt
+        from tb_clockwork_task t
+        where 1=1
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        UNION ALL
+        SELECT 'online' status, COUNT(1) cnt
+        from tb_clockwork_task t
+        where t.online=1
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        UNION ALL
+        SELECT t.status , COUNT(1) cnt
+        FROM tb_clockwork_task t
+        WHERE t.online=1
+        AND date_format(t.update_time,'%Y-%m-%d')=date_format(sysdate(),'%Y-%m-%d')
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        GROUP BY t.status
+    </select>
+
+
+    <!-- 查询当天每小时成功数 -->
+    <select id="selectTaskHourSuccess" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT date_format(l.create_time,'%k') hours , COUNT(1) cnt, MIN(l.id) id
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON l.task_id=t.id
+        WHERE l.create_time>=str_to_date(now(), '%Y-%m-%d')
+        AND l.status='success'
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        GROUP BY date_format(l.create_time,'%k')
+        ORDER BY id
+    </select>
+
+    <!-- 查询当天每小时失败数 -->
+    <select id="selectTaskHourFailed" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT date_format(l.create_time,'%k') hours , COUNT(1) cnt, MIN(l.id) id
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON l.task_id=t.id
+        WHERE l.create_time>=str_to_date(now(), '%Y-%m-%d')
+        AND l.status='failed'
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        GROUP BY date_format(l.create_time,'%k')
+        ORDER BY id
+    </select>
+
+    <!-- 查询任务节点运行情况 -->
+    <select id="selectTaskNodeRunCount" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        n.`id`, n.ip, n.port, n.domain_name domainName, count(*) cnt
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON t.id=l.task_id
+        LEFT JOIN tb_clockwork_node n ON l.node_id = n.id
+        WHERE l.create_time>=str_to_date(now(), '%Y-%m-%d')
+        AND l.status='running'
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        GROUP BY n.`id`, n.ip, n.port, n.domain_name
+    </select>
+
+    <!-- 查询当天每每个节点运行总数 -->
+    <select id="selectTaskNodeHourRun" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT date_format(l.create_time,'%k') hours , COUNT(1) cnt, MIN(l.id) id, l.node_id nodeId
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON l.task_id=t.id
+        WHERE l.create_time>=str_to_date(now(), '%Y-%m-%d')
+        <if test="userName != null">
+            AND t.create_user = #{userName}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        AND l.node_id is not null
+        GROUP BY date_format(l.create_time,'%k'), l.node_id
+        ORDER BY id
+    </select>
+</mapper>

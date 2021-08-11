@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.NodeGroupMapper">
+
+
+    <!-- 列表分页count -->
+    <select id="countAllNodeGroupByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkNodeGroupPojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM tb_clockwork_node_group g
+        WHERE 1=1
+        <if test="id != null">
+            AND g.id = #{id}
+        </if>
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllNodeGroupByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkNodeGroupPojo">
+        SELECT g.id, g.name, g.description,g.create_time createTime,g.update_time updateTime
+        FROM tb_clockwork_node_group g
+        WHERE 1=1
+        <if test="id != null">
+            AND g.id = #{id}
+        </if>
+        LIMIT #{pageNumber},#{pageSize}
+    </select>
+
+
+</mapper>

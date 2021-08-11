@@ -1,0 +1,56 @@
+/*-
+ *  
+ * Clockwork
+ *  
+ * Copyright (C) 2019 - 2020 adx
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *  
+ */
+
+package com.creditease.adx.clockwork.common.entity;
+
+import com.creditease.adx.clockwork.common.pojo.TbClockworkTaskPojo;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+/**
+ * @ Author     ：XuanDongTang
+ * @ Date       ：Created in 5:05 下午 2020/5/12
+ * @ Description：任务分发Tuple信息
+ * @ Modified By：
+ */
+@Getter
+@Setter
+public class TaskDistributeTuple {
+
+    @ApiModelProperty(value = "任务分发URL", required = true)
+    private String distributeURL;
+
+    @ApiModelProperty("任务分发节点ID")
+    private Integer nodeId;
+
+    @ApiModelProperty("任务分发执行类型")
+    private int executeType;
+
+    @ApiModelProperty("分发任务ids")
+    private List<Integer> taskIds;
+
+    @ApiModelProperty("分发任务List")
+    private List<TbClockworkTaskPojo> taskPojoList;
+
+
+}

@@ -1,0 +1,36 @@
+####################################################################################################################
+####################################################   DEV环境配置   ################################################
+monitor.task.running.cron.exp: "0 */5 * * * ?"
+monitor.task.exception.cron.exp: "0 */10 * * * ?"
+monitor.task.failed.cron.exp: "0 */10 * * * ?"
+monitor.task.status.report.cron.exp: "0 */5 * * * ?"
+
+monitor.node.status.cron.exp: "0 */3 * * * ?"
+monitor.slot.cron.exp: "0 */5 * * * ?"
+monitor.clean.log.cron.exp: "0 0 12 * * ?"
+monitor.reset.life.cycle.cron.exp: "0 0 23 * * ?"
+
+#成环检测任务检测定时任务表达式
+monitor.dag.check.cron.exp: "0 */5 * * * ?"
+
+# 保留最近多少天的lockRecord日志
+kept.lately.lock.record.logs.day: 7
+
+# 任务运行超时分钟数
+task.running.timeout.minutes: 60
+
+# 任务异常停留时间
+task.exception.residence.time.minutes: 120
+
+# master每批次发送到worker的任务数
+task.batch.send.to.worker.num: 200
+
+# 邮件地址
+send.notify.service.email.url: http://127.0.0.1:8080/alarm/sendemail
+send.notify.service.phone.url: http://127.0.0.1:8080/sendMail
+
+eureka:
+    client.serviceUrl.defaultZone: http://t5:8761/eureka/
+    instance:
+        preferIpAddress: true
+        instance-id: ${spring.cloud.client.ipAddress}:${server.port}

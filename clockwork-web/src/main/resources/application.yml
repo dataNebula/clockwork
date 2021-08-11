@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: ADX-CLOCKWORK-WEB
+
+server.port: 9006
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
+
+ribbon:
+  ReadTimeout: 600000
+  ConnectTimeout: 5000
+  OkToRetryOnAllOperations: false # 对所有操作请求都进行重试,默认false
+  MaxAutoRetries: 1     # 对当前实例的重试次数，默认0
+  MaxAutoRetriesNextServer: 1 # 对切换实例的重试次数，默认1
+ribbon.eureka.enable: true
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TbClockworkProjectExtMapper">
+
+    <insert id="inviteUser" keyColumn="id" keyProperty="id" parameterType="com.creditease.adx.clockwork.common.entity.gen.TbClockworkProjectUser" useGeneratedKeys="true">
+        insert ignore into tb_clockwork_project_user (project_id, user_name, create_by, create_time) values
+        <foreach collection="userName.split(',')" separator="," item="item">
+            (#{projectId,jdbcType=BIGINT}, #{item,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+</mapper>

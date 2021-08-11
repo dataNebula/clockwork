@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.creditease.adx</groupId>
+    <artifactId>clockwork</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>clockwork-master</module>
+        <module>clockwork-worker</module>
+        <module>clockwork-api</module>
+        <module>clockwork-client</module>
+        <module>clockwork-dfs</module>
+        <module>clockwork-common</module>
+        <module>clockwork-redis</module>
+        <module>clockwork-dao</module>
+        <module>clockwork-web</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <spring.boot.version>1.5.22.RELEASE</spring.boot.version>
+    </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.22.RELEASE</version>
+    </parent>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Edgware.SR6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-ribbon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.10</version> <!--$NO-MVN-MAN-VER$-->
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.10.4</version> <!--$NO-MVN-MAN-VER$-->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.10</version> <!--$NO-MVN-MAN-VER$-->
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version> <!--$NO-MVN-MAN-VER$-->
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9</version> <!--$NO-MVN-MAN-VER$-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.feign</groupId>
+            <artifactId>feign-gson</artifactId>
+            <version>8.18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.feign</groupId>
+            <artifactId>feign-core</artifactId>
+            <version>8.18.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version> <!--$NO-MVN-MAN-VER$-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0.1-jre</version> <!--$NO-MVN-MAN-VER$-->
+        </dependency>
+        <!-- XStream漏洞修复、远程代码执行、CVE-2020-26217 覆盖spring-cloud-starter-eureka中依赖-->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.14</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <!-- update header -->
+                    <inceptionYear>2019</inceptionYear>
+                    <licenseName>apache_v2</licenseName>
+                    <organizationName>adx</organizationName>
+                    <projectName>Clockwork</projectName>
+                    <processStartTag>&nbsp;</processStartTag>
+                    <processEndTag>&nbsp;</processEndTag>
+                    <sectionDelimiter>&nbsp;</sectionDelimiter>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <emptyLineAfterHeader>true</emptyLineAfterHeader>
+                    <outputDirectory>${project.basedir}</outputDirectory>
+                    <useMissingFile>true</useMissingFile>
+                    <thirdPartyFilename>LICENSE-3RD-PARTY</thirdPartyFilename>
+                    <executeOnlyOnRootModule>true</executeOnlyOnRootModule>
+                    <missingFile>${project.basedir}/LICENSE-3RD-PART.propertie</missingFile>
+                    <roots>
+                        <root>src/main/java</root>
+                        <root>src/test/java</root>
+                    </roots>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>**/*.xml</include>
+                        <include>**/*.sh</include>
+                        <include>**/*.properties</include>
+                        <include>**/*.sql</include>
+                        <include>**/*.html</include>
+                        <include>**/*.less</include>
+                        <include>**/*.css</include>
+                        <include>**/*.js</include>
+                        <include>**/*.json</include>
+                    </includes>
+
+                    <!-- license:aggregate-download-licenses -->
+                    <licensesOutputFile>${project.basedir}/lic/licenses.xml</licensesOutputFile>
+                    <licensesOutputDirectory>${project.basedir}/lic/licenses/</licensesOutputDirectory>
+                    <licensesErrorsFile>${project.basedir}/lic/licenses-errors.xml</licensesErrorsFile>
+
+                    <!-- config for mvn license:update-project-license -->
+                    <licenseFile>${project.basedir}/LICENSE</licenseFile>
+
+                    <licenseMerges>
+                        <licenseMerge>Apache 2.0|ASL, version
+                            2|http://www.apache.org/licenses/LICENSE-2.0.txt|http://asm.ow2.org/license.html|The
+                            Apache License, Version 2.0|Apache License|Apache License Version 2|Apache License
+                            Version 2.0|Apache Software License - Version 2.0|Apache 2.0 License|Apache License
+                            2.0|ASL|Apache 2|Apache-2.0|the Apache License, ASL Version 2.0|The Apache Software
+                            License, Version 2.0|Apache License, Version 2.0|Apache Public License 2.0
+                        </licenseMerge>
+                        <licenseMerge>BSD|The BSD 3-Clause License|The BSD License|Modified BSD License|New BSD
+                            License|New BSD license|Two-clause BSD-style license|BSD licence|BSD New|The New BSD
+                            License|BSD 3-Clause|BSD 3-clause
+                        </licenseMerge>
+                        <licenseMerge>MIT|MIT License|The MIT License</licenseMerge>
+                        <licenseMerge>LGPL|LGPL, version 2.1|GNU Library or Lesser General Public License (LGPL)
+                            V2.1|GNU Lesser General Public License (LGPL), Version 2.1|GNU Lesser General Public
+                            License, Version 2.1|LGPL 2.1
+                        </licenseMerge>
+                        <licenseMerge>CDDL|CDDL+GPL|CDDL+GPL License|CDDL + GPLv2 with classpath exception|CDDL
+                            License|CDDL 1.0|CDDL 1.1|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version
+                            1.0|Common Development and Distribution License (CDDL) v1.0
+                        </licenseMerge>
+                        <licenseMerge>EPL|Eclipse Public License - Version 1.0</licenseMerge>
+                        <licenseMerge>GPL|GPL2 w/ CPE|GPLv2+CE|GNU General Public Library</licenseMerge>
+                        <licenseMerge>MPL|MPL 1.1</licenseMerge>
+                        <licenseMerge>Public Domain</licenseMerge>
+                        <licenseMerge>Common Public License|Common Public License Version 1.0</licenseMerge>
+                        <licenseMerge>CC0|CC0 1.0 Universal|Public Domain, per Creative Commons CC0</licenseMerge>
+                        <licenseMerge>Unknown License|Unknown license</licenseMerge>
+                    </licenseMerges>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <generateChildNotices>false</generateChildNotices>
+                    <noticeTemplate>https://source.jasig.org/licenses/NOTICE.template</noticeTemplate>
+                    <licenseMapping>
+                        <param>${project.basedir}/lic/license-mappings.xml</param>
+                        <param>https://source.jasig.org/licenses/license-mappings.xml</param>
+                    </licenseMapping>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

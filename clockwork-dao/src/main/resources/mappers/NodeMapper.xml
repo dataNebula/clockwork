@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.NodeMapper">
+
+
+    <!-- 列表分页count -->
+    <select id="countAllNodeByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkNodePojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM tb_clockwork_node n
+        LEFT JOIN tb_clockwork_node_group g ON n.node_group_id=g.id
+        WHERE 1=1
+        <if test="id != null">
+            AND n.id = #{id}
+        </if>
+        <if test="ip != null and ip !=''">
+            AND n.ip = #{ip}
+        </if>
+        <if test="nodeGroupId != null">
+            AND n.node_group_id = #{nodeGroupId}
+        </if>
+        <if test="domainName != null and domainName !=''">
+            AND n.domain_name like '%${domainName}%'
+        </if>
+        <if test="role != null and role !=''">
+            AND n.role = #{role}
+        </if>
+        <if test="status != null and status !=''">
+            AND n.status = #{status}
+        </if>
+        <if test="groupName != null and groupName !=''">
+            AND g.name = #{groupName}
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllNodeByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkNodePojo">
+        SELECT n.id, n.node_group_id nodeGroupId, n.role, n.domain_name domainName, n.ip, n.port, n.status,
+        n.create_time createTime,n.update_time updateTime, g.`name` groupName
+        FROM tb_clockwork_node n
+        LEFT JOIN tb_clockwork_node_group g ON n.node_group_id=g.id
+        WHERE 1=1
+        <if test="id != null">
+            AND n.id = #{id}
+        </if>
+        <if test="ip != null and ip !=''">
+            AND n.ip = #{ip}
+        </if>
+        <if test="nodeGroupId != null">
+            AND n.node_group_id = #{nodeGroupId}
+        </if>
+        <if test="domainName != null and domainName !=''">
+            AND n.domain_name like '%${domainName}%'
+        </if>
+        <if test="role != null and role !=''">
+            AND n.role = #{role}
+        </if>
+        <if test="status != null and status !=''">
+            AND n.status = #{status}
+        </if>
+        <if test="groupName != null and groupName !=''">
+            AND g.name = #{groupName}
+        </if>
+        ORDER BY n.status desc, n.role, n.id
+        LIMIT #{pageNumber},#{pageSize}
+    </select>
+
+
+</mapper>

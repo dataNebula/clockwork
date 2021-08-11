@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TaskMapper">
+
+    <select id="selectAllTaskUsedByAutoComplete"
+            parameterType="java.lang.String"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTask4PagePojo">
+        SELECT id, `name`
+        FROM tb_clockwork_task
+        WHERE source = 4 AND online = 1
+        <if test="idOrNameSegment != null and idOrNameSegment !=''">
+            AND CONCAT(id,`name`) LIKE '%${idOrNameSegment}%'
+        </if>
+    </select>
+
+    <!-- 根据source查询DagID -->
+    <select id="selectTaskDagIdsBySource" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT dag_id
+        FROM tb_clockwork_task
+        WHERE source = ${_parameter} AND online = 1 and dag_id != -1 group by dag_id
+    </select>
+
+    <!-- 根据source查询DagID，并且存在dag任务跨source -->
+    <select id="selectTaskDagIdsByCrossSource" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT dag_id FROM (
+            SELECT dag_id FROM tb_clockwork_task
+            WHERE source = ${_parameter} AND online = 1 AND dag_id != -1 GROUP BY dag_id
+        ) d
+        WHERE EXISTS (SELECT 1 FROM tb_clockwork_task t WHERE d.dag_id=t.dag_id AND t.source != ${_parameter} )
+    </select>
+
+    <!-- 查询一段时间内失败的任务 -->
+    <select id="selectTaskByRunFailedStatus"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTaskPojo">
+        SELECT
+        t.id, t.`name`, t.description, t.location, t.command command, t.status, t.trigger_mode triggerMode,
+        t.dependency_id dependencyId, t.time_type timeType, t.run_frequency runFrequency,t.trigger_time triggerTime,
+        t.next_trigger_time nextTriggerTime,
+        t.group_id groupId, t.create_user createUser, t.is_private isPrivate, t.failed_retries failedRetries,
+        t.email_list emailList, t.run_timeout runTimeout,t.last_start_time lastStartTime, t.last_end_time
+        lastEndTime, t.create_time createTime, t.update_time updateTime, t.run_engine runEngine, t.parameter,
+        t.expired_time expiredTime,t.proxy_user proxyUser, t.is_first isFirst,
+        t.source,t.business_info businessInfo, t.cron_exp cronExp, t.online,t.script_name scriptName,
+        t.script_parameter scriptParameter, t.operator_name operatorName, t.dag_id dagId
+        FROM tb_clockwork_task t
+        WHERE online = 1
+        AND (
+        t.status in (${status})
+        <if test="beforeDateStr != null and beforeDateStr !=''">
+            AND t.last_end_time <![CDATA[ >= ]]> '${beforeDateStr}'
+        </if>
+        <if test="currentDateStr != null and currentDateStr !=''">
+            AND t.last_end_time <![CDATA[ < ]]> '${currentDateStr}'
+        </if>
+        )
+        OR (
+        t.status='father_not_success'
+        <if test="beforeDateStr != null and beforeDateStr !=''">
+            AND t.update_time <![CDATA[ >= ]]> '${beforeDateStr}'
+        </if>
+        <if test="currentDateStr != null and currentDateStr !=''">
+            AND t.update_time <![CDATA[ < ]]> '${currentDateStr}'
+        </if>
+        )
+        ORDER BY t.last_end_time DESC
+    </select>
+
+    <select id="selectAllTaskByCondition"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkTask4PagePojo"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTask4PagePojo">
+        SELECT
+        t.id, t.`name`, t.description, t.location, t.command command, t.status, t.trigger_mode triggerMode,
+        t.dependency_id dependencyId, t.time_type timeType, t.run_frequency runFrequency,t.trigger_time triggerTime,
+        t.next_trigger_time nextTriggerTime,t.group_id groupId, t.create_user createUser, t.is_private isPrivate,
+        t.failed_retries failedRetries,
+        t.email_list emailList, t.run_timeout runTimeout,t.last_start_time lastStartTime, t.last_end_time
+        lastEndTime, t.create_time createTime, t.update_time updateTime, t.run_engine runEngine, t.parameter,
+        t.expired_time expiredTime,t.proxy_user proxyUser, t.is_first isFirst,
+        t.source,t.business_info businessInfo, t.cron_exp cronExp, t.online,t.script_name scriptName,
+        t.script_parameter scriptParameter, t.operator_name operatorName, g.name groupName
+        FROM tb_clockwork_task t
+        LEFT JOIN tb_clockwork_task_group g ON t.group_id=g.id
+        WHERE 1=1
+        <if test="id != null">
+            and t.id = ${id}
+        </if>
+        <if test="groupId != null">
+            and t.group_id = ${groupId}
+        </if>
+        <if test="name != null and name !=''">
+            and t.name like '%${name}%'
+        </if>
+        <if test="groupName != null and groupName !=''">
+            and g.name like '%${groupName}%'
+        </if>
+        <if test="status != null">
+            and t.status = #{status}
+        </if>
+        <if test="triggerMode != null">
+            and t.trigger_mode = #{triggerMode}
+        </if>
+        <if test="source != null">
+          AND t.source = #{source}
+        </if>
+        <if test="createUser != null and createUser !=''">
+            and t.create_user = #{createUser}
+        </if>
+        <if test="online != null">
+            and t.online = #{online}
+        </if>
+        <if test="createTime != null">
+            and date_format(t.create_time, '%Y-%m') = date_format(#{createTime}, '%Y-%m')
+        </if>
+        ORDER BY t.id DESC
+    </select>
+
+    <!-- 列表分页count -->
+    <select id="countAllTaskByPageParam"
+            parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT COUNT(*) num
+        FROM tb_clockwork_task t
+        LEFT JOIN tb_clockwork_task_group g ON t.group_id=g.id
+        WHERE 1=1
+        <if test="id != null">
+            AND t.id = #{id}
+        </if>
+        <if test="groupId != null and groupId !=''">
+            AND t.group_id = #{groupId}
+        </if>
+        <if test="name != null and name !=''">
+            AND t.name like '%${name}%'
+        </if>
+        <if test="groupName != null and groupName !=''">
+            AND g.name like '%${groupName}%'
+        </if>
+        <if test="dagId != null and dagId !=''">
+            AND t.dag_id = #{dagId}
+        </if>
+        <if test="status != null">
+            AND t.status = #{status}
+        </if>
+        <if test="triggerMode != null">
+            AND t.trigger_mode = #{triggerMode}
+        </if>
+        <if test="online != null">
+            AND t.online = #{online}
+        </if>
+        <if test="source != null">
+            AND t.source = #{source}
+        </if>
+        <if test="createUser != null">
+            AND t.create_user like '%${createUser}%'
+        </if>
+        <if test="lastStartTime != null">
+            AND t.last_start_time <![CDATA[ >= ]]> '${lastStartTime}'
+        </if>
+        <if test="lastEndTime != null">
+            AND (t.last_end_time is null or t.last_end_time <![CDATA[ <= ]]> '${lastEndTime}')
+        </if>
+        <if test="businessInfo != null and businessInfo !=''">
+            AND t.business_info = #{businessInfo}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in (${roleName}) )
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllTaskByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTask4PagePojo">
+        SELECT
+        t.id, t.`name`, t.description, t.location, t.command command, t.status, t.trigger_mode triggerMode,
+        t.dependency_id dependencyId, t.time_type timeType, t.run_frequency runFrequency,t.trigger_time triggerTime,
+        t.next_trigger_time nextTriggerTime,
+        t.group_id groupId, t.create_user createUser, t.is_private isPrivate, t.failed_retries failedRetries,
+        t.email_list emailList, t.run_timeout runTimeout,t.last_start_time lastStartTime, t.last_end_time
+        lastEndTime, t.create_time createTime, t.update_time updateTime, t.run_engine runEngine, t.parameter,
+        t.expired_time expiredTime,t.proxy_user proxyUser, t.is_first isFirst,
+        t.source,t.business_info businessInfo, t.cron_exp cronExp, t.online,t.script_name scriptName,
+        t.script_parameter scriptParameter, t.operator_name operatorName,
+        t.dag_id dagId,g.name groupName,
+        ng.`name` nodeGName
+        FROM tb_clockwork_task t
+        LEFT JOIN tb_clockwork_task_group g ON t.group_id=g.id
+        LEFT JOIN tb_clockwork_node_group ng ON t.`node_gid`=ng.id
+        WHERE 1=1
+        <if test="id != null">
+            AND t.id = #{id}
+        </if>
+        <if test="groupId != null and groupId !=''">
+            AND t.group_id = #{groupId}
+        </if>
+        <if test="name != null and name !=''">
+            AND t.name like '%${name}%'
+        </if>
+        <if test="groupName != null and groupName !=''">
+            AND g.name like '%${groupName}%'
+        </if>
+        <if test="dagId != null and dagId !=''">
+            AND t.dag_id = #{dagId}
+        </if>
+        <if test="status != null">
+            AND t.status = #{status}
+        </if>
+        <if test="triggerMode != null">
+            AND t.trigger_mode = #{triggerMode}
+        </if>
+        <if test="online != null">
+            AND t.online = #{online}
+        </if>
+        <if test="source != null">
+            AND t.source = #{source}
+        </if>
+        <if test="createUser != null">
+            AND t.create_user like '%${createUser}%'
+        </if>
+        <if test="lastStartTime != null">
+            AND t.last_start_time <![CDATA[ >= ]]> '${lastStartTime}'
+        </if>
+        <if test="lastEndTime != null">
+            AND (t.last_end_time is null or t.last_end_time <![CDATA[ <= ]]> '${lastEndTime}')
+        </if>
+        <if test="businessInfo != null and businessInfo !=''">
+            AND t.business_info = #{businessInfo}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        ORDER BY t.id DESC
+        LIMIT #{pageNumber},#{pageSize}
+    </select>
+
+
+    <select id="selectAllIdAndName" resultType="java.util.Map" parameterType="java.lang.Integer">
+        SELECT
+        id, name
+        FROM tb_clockwork_task
+        where online=1
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+    </select>
+
+    <!-- 查询当天各状态作业数量情况,sum:总作业,success:成功作业,failed:失败作业,submit:待运行的作业,running:运行中作业-->
+    <select id="selectTaskStatistics" resultType="java.util.Map">
+        select 'sum' as task_status, count(1) as task_num from tb_clockwork_task t where t.status != 'disable'
+        union all
+        select t.status as status, count(1) as task_num from tb_clockwork_task t
+        where t.status in ('success','failed','submit','worker_has_received','running')
+        and date_format(t.update_time,'%Y-%m-%d')=date_format(sysdate(),'%Y-%m-%d')
+        group by t.status
+    </select>
+
+    <!-- 查询当天各状态作业数量情况,sum:总作业,success:成功作业,failed:失败作业,submit:待运行的作业,running:运行中作业-->
+    <select id="selectTaskStatisticsByUserName" resultType="java.util.Map">
+        select 'sum' as task_status, count(1) as task_num from tb_clockwork_task t where t.status != 'disable' and create_user = #{createUser,jdbcType=VARCHAR}
+        union all
+        select t.status as status, count(1) as task_num from tb_clockwork_task t
+        where t.status in ('success','failed','submit','worker_has_received','running') and create_user = #{createUser,jdbcType=VARCHAR}
+        and date_format(t.update_time,'%Y-%m-%d')=date_format(sysdate(),'%Y-%m-%d')
+        group by t.status
+    </select>
+
+
+    <select id="selectTaskIdAndNameByUserGroupName" resultType="java.util.Map" parameterType="java.util.Map">
+        select id, name from tb_clockwork_task where create_user = #{createUser}
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+        union
+        select id, name from tb_clockwork_task where group_id in (select id from tb_clockwork_task_group where
+        user_group_name = #{userGroupName} )
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+        union
+        select id, name from tb_clockwork_task where is_private = 0
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+    </select>
+
+
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.creditease.adx.clockwork.common.entity.gen.TbClockworkTask">
+        <!--
+          WARNING - @mbggenerated
+          This element is automatically generated by MyBatis Generator, do not modify.
+          This element was generated on Mon Dec 02 12:37:30 CST 2019.
+        -->
+        update tb_clockwork_task
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="aliasName != null">
+                alias_name = #{aliasName,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="dagId != null">
+                dag_id = #{dagId,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=INTEGER},
+            </if>
+            <if test="nodeGid != null">
+                node_gid = #{nodeGid,jdbcType=INTEGER},
+            </if>
+            <if test="location != null">
+                `location` = #{location,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptName != null">
+                script_name = #{scriptName,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptType != null">
+                script_type = #{scriptType,jdbcType=VARCHAR},
+            </if>
+            <if test="scriptParameter != null">
+                script_parameter = #{scriptParameter,jdbcType=VARCHAR},
+            </if>
+            <if test="command != null">
+                command = #{command,jdbcType=VARCHAR},
+            </if>
+            <if test="parameter != null">
+                `parameter` = #{parameter,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerMode != null">
+                trigger_mode = #{triggerMode,jdbcType=INTEGER},
+            </if>
+            <if test="cronExp != null">
+                cron_exp = #{cronExp,jdbcType=VARCHAR},
+            </if>
+            <if test="triggerTime != null">
+                trigger_time = #{triggerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="nextTriggerTime != null">
+                next_trigger_time = #{nextTriggerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="timeType != null">
+                time_type = #{timeType,jdbcType=VARCHAR},
+            </if>
+            <if test="runFrequency != null">
+                run_frequency = #{runFrequency,jdbcType=INTEGER},
+            </if>
+            <if test="dependencyId != null">
+                dependency_id = #{dependencyId,jdbcType=VARCHAR},
+            </if>
+            <if test="expiredTime != null">
+                expired_time = #{expiredTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="failedRetries != null">
+                failed_retries = #{failedRetries,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="delayStatus != null">
+                delay_status = #{delayStatus,jdbcType=INTEGER},
+            </if>
+            <if test="online != null">
+                `online` = #{online,jdbcType=BIT},
+            </if>
+            <if test="lastStartTime != null">
+                last_start_time = #{lastStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastEndTime != null">
+                last_end_time = #{lastEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="runTimeout != null">
+                run_timeout = #{runTimeout,jdbcType=INTEGER},
+            </if>
+            <if test="runEngine != null">
+                run_engine = #{runEngine,jdbcType=VARCHAR},
+            </if>
+            <if test="isPrivate != null">
+                is_private = #{isPrivate,jdbcType=BIT},
+            </if>
+            <if test="isFirst != null">
+                is_first = #{isFirst,jdbcType=BIT},
+            </if>
+            <if test="isSyncFile != null">
+                is_sync_file = #{isSyncFile,jdbcType=BIT},
+            </if>
+            <if test="isReplace != null">
+                is_replace = #{isReplace,jdbcType=BIT},
+            </if>
+            <if test="source != null">
+                `source` = #{source,jdbcType=INTEGER},
+            </if>
+            <if test="proxyUser != null">
+                proxy_user = #{proxyUser,jdbcType=VARCHAR},
+            </if>
+            <if test="batchNumber != null">
+                batch_number = #{batchNumber,jdbcType=BIGINT},
+            </if>
+            <if test="businessInfo != null">
+                business_info = #{businessInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorName != null">
+                operator_name = #{operatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="emailList != null">
+                email_list = #{emailList,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="errorKeywordIds != null">
+                error_keyword_ids = #{errorKeywordIds,jdbcType=VARCHAR},
+            </if>
+            <if test="cronExp == null">
+                cron_exp = NULL,
+            </if>
+            <if test="dependencyId == null">
+                dependency_id = NULL,
+            </if>
+            <if test="triggerTime == null">
+                trigger_time = NULL,
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

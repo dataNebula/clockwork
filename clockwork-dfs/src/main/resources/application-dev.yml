@@ -1,0 +1,18 @@
+####################################################################################################################
+####################################################   DEV环境配置   ################################################
+####################################################################################################################
+
+# HDfs相关配置
+hadoop.conf.file.dir: /etc/hadoop/conf
+hadoop.fs.username: hadoop
+hadoop.fs.defaultFS.port: 8020
+
+temporary.upload.location: temp
+
+eureka:
+  client.serviceUrl.defaultZone: http://t5:8761/eureka/
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+
+

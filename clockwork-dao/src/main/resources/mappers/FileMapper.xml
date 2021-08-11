@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.FileMapper">
+
+    <!-- 列表分页count -->
+    <select id="countAllFileByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkFilePojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM tb_clockwork_upload_file f
+        WHERE 1=1
+        <if test="uploadFileAbsolutePath != null and uploadFileAbsolutePath !=''">
+            AND f.upload_file_absolute_path like '%${uploadFileAbsolutePath}%'
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllFileByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkFilePojo">
+        SELECT f.id, f.upload_file_absolute_path uploadFileAbsolutePath,f.status,f.operate_type
+        operateType,f.operator_email operatorEmail,f.create_time createTime,f.update_time updateTime
+        FROM tb_clockwork_upload_file f
+        WHERE 1=1
+        <if test="uploadFileAbsolutePath != null and uploadFileAbsolutePath !=''">
+            AND f.upload_file_absolute_path like '%${uploadFileAbsolutePath}%'
+        </if>
+        ORDER BY f.id DESC
+        LIMIT #{pageNumber},#{pageSize}
+    </select>
+
+
+</mapper>

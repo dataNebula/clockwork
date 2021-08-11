@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TaskFillDataMapper">
+
+    <!-- 列表分页count -->
+    <select id="countAllTaskFillDataByPageParam"
+            parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT f.id)
+        FROM tb_clockwork_task_fill_data f
+        LEFT JOIN tb_clockwork_task_rerun r ON f.`rerun_batch_number`=r.`rerun_batch_number`
+        LEFT JOIN tb_clockwork_task t ON r.task_id = t.id
+        LEFT JOIN tb_clockwork_task_group g ON r.`group_id`=g.id
+        WHERE 1=1
+        <if test="taskIds != null">
+            and r.task_id in ('${taskIds}')
+        </if>
+        <if test="taskGroupId != null">
+            and r.group_id = #{taskGroupId}
+        </if>
+        <if test="taskGroupAliasName != null">
+            and f.task_group_alias_name like '%${taskGroupAliasName}%'
+        </if>
+        <if test="fillDataType != null and fillDataType !=''">
+            and f.fill_data_type = '${fillDataType}'
+        </if>
+        <if test="fillDataTime != null and fillDataTime !=''">
+            and f.fill_data_time like '%${fillDataTime}%'
+        </if>
+        <if test="operatorName != null">
+            and f.operator_name like '%${operatorName}%'
+        </if>
+        <if test="createTimeStart != null">
+            and f.create_time <![CDATA[ >= ]]> '${createTimeStart}'
+        </if>
+        <if test="createTimeEnd != null">
+            and f.create_time <![CDATA[ <= ]]> '${createTimeEnd}'
+        </if>
+        <if test="rerunBatchNumber != null and rerunBatchNumber !=''">
+            and f.rerun_batch_number = #{rerunBatchNumber}
+        </if>
+        <if test="description != null">
+            and f.description like '%${description}%'
+        </if>
+        <if test="externalId != null">
+            and g.external_id = #{externalId}
+        </if>
+        <if test="createUser != null">
+            AND t.create_user = #{createUser}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllTaskFillDataByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTaskFillDataPojo">
+        SELECT DISTINCT f.id,f.operator_name operatorName,f.task_ids taskIds,f.task_group_alias_name taskGroupAliasName,
+        f.task_count taskCount, f.task_count_success taskCountSuccess , f.fill_data_type fillDataType,
+        f.fill_data_time fillDataTime, f.fill_data_time_count fillDataTimeCount, f.status,
+        f.curr_fill_data_time currFillDataTime, f.curr_fill_data_time_sort currFillDataTimeSort,
+        f.rerun_batch_number rerunBatchNumber , f.start_time startTime, f.execute_time executeTime,
+        f.end_time endTime, f.is_end isEnd, f.description , f.update_time updateTime, f.create_time createTime,
+        g.external_id externalId
+        FROM tb_clockwork_task_fill_data f
+        LEFT JOIN tb_clockwork_task_rerun r ON f.`rerun_batch_number`=r.`rerun_batch_number`
+        LEFT JOIN tb_clockwork_task t ON r.task_id = t.id
+        LEFT JOIN tb_clockwork_task_group g ON r.`group_id`=g.id
+        WHERE 1=1
+        <if test="taskIds != null">
+            and r.task_id in ('${taskIds}')
+        </if>
+        <if test="taskGroupId != null">
+            and r.group_id = #{taskGroupId}
+        </if>
+        <if test="taskGroupAliasName != null">
+            and f.task_group_alias_name like '%${taskGroupAliasName}%'
+        </if>
+        <if test="fillDataType != null and fillDataType !=''">
+            and f.fill_data_type = '${fillDataType}'
+        </if>
+        <if test="fillDataTime != null and fillDataTime !=''">
+            and f.fill_data_time like '%${fillDataTime}%'
+        </if>
+        <if test="operatorName != null">
+            and f.operator_name like '%${operatorName}%'
+        </if>
+        <if test="createTimeStart != null">
+            and f.create_time <![CDATA[ >= ]]> '${createTimeStart}'
+        </if>
+        <if test="createTimeEnd != null">
+            and f.create_time <![CDATA[ <= ]]> '${createTimeEnd}'
+        </if>
+        <if test="rerunBatchNumber != null and rerunBatchNumber !=''">
+            and f.rerun_batch_number = #{rerunBatchNumber}
+        </if>
+        <if test="description != null">
+            and f.description like '%${description}%'
+        </if>
+        <if test="externalId != null">
+            and g.external_id = #{externalId}
+        </if>
+        <if test="createUser != null">
+            AND t.create_user = #{createUser}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+
+        ORDER BY f.id DESC
+        limit #{pageNumber},#{pageSize}
+    </select>
+
+    <select id="selectTasksByReRunBatchNumber"
+            parameterType="java.lang.Long"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTask4PagePojo">
+        SELECT
+        t.id, t.`name`, t.description, t.location, t.command command, t.status, t.trigger_mode triggerMode,
+        t.dependency_id dependencyId, t.time_type timeType, t.run_frequency runFrequency,t.trigger_time triggerTime,
+        t.group_id groupId, t.create_user createUser, t.is_private isPrivate, t.failed_retries failedRetries,
+        t.email_list emailList, t.run_timeout runTimeout,t.last_start_time lastStartTime, t.last_end_time
+        lastEndTime, t.create_time createTime, t.update_time updateTime, t.run_engine runEngine, t.parameter,
+        t.expired_time expiredTime,t.proxy_user proxyUser, t.is_first isFirst,
+        t.source source,t.business_info businessInfo, t.cron_exp cronExp, t.online,t.script_name scriptName,
+        t.script_parameter scriptParameter,t.source, f.operator_name operatorName,
+        f.rerun_batch_number rerunBatchNumber, f.fill_data_time fillDataTime, g.name groupName
+        FROM tb_clockwork_task_fill_data f
+        LEFT JOIN tb_clockwork_task_rerun r ON f.`rerun_batch_number`=r.`rerun_batch_number`
+        LEFT JOIN tb_clockwork_task t ON r.`task_id`=t.id
+        LEFT JOIN tb_clockwork_task_group g ON t.group_id=g.id
+        WHERE 1=1 AND f.rerun_batch_number = ${_parameter}
+        ORDER BY t.id DESC
+    </select>
+
+
+    <select id="selectTaskLogsByReRunBNAndTaskId"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTaskLogPojo">
+        SELECT l.id,l.task_id taskId,l.task_name taskName,l.node_id nodeId,l.status,l.pid,l.real_command realCommand,
+        l.return_code returnCode,l.log_name logName,l.start_time startTime,l.execute_time executeTime,l.end_time
+        endTime,
+        l.execute_type executeType,l.rerun_batch_number rerunBatchNumber,l.fill_data_time fillDataTime,
+        l.return_msg returnMsg,l.run_engine runEngine,l.group_id groupId,l.batch_number batchNumber,l.parameter,
+        l.create_time createTime,l.update_time updateTime, l.is_end isEnd,g.name taskGroupName,
+        t.source,t.alias_name taskAliasName,
+        g.alias_name taskGroupAliasName,n.ip nodeIp,n.port nodePort,
+        f.operator_name operatorName
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON l.task_id=t.id
+        LEFT JOIN tb_clockwork_task_fill_data f ON l.rerun_batch_number=l.rerun_batch_number
+        LEFT JOIN tb_clockwork_task_group g ON l.group_id=g.id
+        LEFT JOIN tb_clockwork_node n ON l.node_id = n.id where 1=1
+        <if test="rerunBatchNumber != null">
+            and l.rerun_batch_number = ${rerunBatchNumber}
+        </if>
+        <if test="taskId != null">
+            and l.task_id = ${taskId}
+        </if>
+        order by l.id desc
+    </select>
+
+
+    <update id="updateTaskFillDataSuccessCount" parameterType="java.lang.Long">
+        update tb_clockwork_task_fill_data
+        <set>
+            task_count_success = task_count_success+1
+        </set>
+        where rerun_batch_number = ${_parameter}
+    </update>
+
+</mapper>

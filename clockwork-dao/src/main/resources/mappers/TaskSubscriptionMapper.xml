@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TaskSubscriptionMapper">
+
+    <!-- 列表分页count -->
+    <select id="selectTaskSubscriptionBySubscriptionTime"
+            parameterType="java.lang.String"
+            resultType="com.creditease.adx.clockwork.common.entity.gen.TbClockworkTaskSubscription">
+        SELECT
+        s.id, s.task_id taskId, s.user_id userId, s.user_name userName, s.user_email userEmail,
+        s.mobile_number mobileNumber, s.subscription_time subscriptionTime, s.create_time createTime, s.update_time updateTime
+        FROM tb_clockwork_task_subscription s
+        WHERE s.subscription_time = '${_parameter}'
+    </select>
+
+
+</mapper>

@@ -1,0 +1,10 @@
+spring:
+    profiles:
+        active: dev
+    application:
+        name: ADX-CLOCKWORK-MASTER
+    run.init: true
+
+server.port: 9009
+
+

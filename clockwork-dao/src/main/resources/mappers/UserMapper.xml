@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.UserMapper">
+
+
+    <!-- 获取用户和角色信息 -->
+    <select id="selectUserAndRoleByUserName"
+            parameterType="java.lang.String"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkUserPojo">
+        SELECT u.id, u.user_name userName,u.is_active isActive,u.create_time createTime,u.update_time updateTime,
+        group_concat(r.name) roleName, SUM(r.is_admin) isAdmin
+        FROM
+        tb_clockwork_user u
+        LEFT JOIN tb_clockwork_user_role ur ON u.`id`=ur.`user_id`
+        LEFT JOIN tb_clockwork_role r ON ur.`role_id`=r.`id`
+        WHERE u.user_name = '${_parameter}'
+        group by u.id, u.user_name,u.is_active,u.create_time,u.update_time
+    </select>
+
+
+
+    <!-- 列表分页count -->
+    <select id="countAllUserByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkUserPojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM
+        tb_clockwork_user u
+        WHERE 1=1
+
+        <if test="userName != null and userName !=''">
+            AND u.user_name = #{userName}
+        </if>
+
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_user_role ur LEFT JOIN tb_clockwork_role r ON ur.`role_id`=r.`id`
+            WHERE u.`id`=ur.`user_id` and r.name = #{roleName}
+            )
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllUserByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkUserPojo">
+        SELECT u.id, u.user_name userName,u.is_active isActive,u.create_time createTime,u.update_time updateTime,
+        group_concat(r.name) roleName
+        FROM
+        tb_clockwork_user u
+        LEFT JOIN tb_clockwork_user_role ur ON u.`id`=ur.`user_id`
+        LEFT JOIN tb_clockwork_role r ON ur.`role_id`=r.`id`
+        WHERE 1=1
+
+        <if test="userName != null and userName !=''">
+            AND u.user_name = #{userName}
+        </if>
+
+        <if test="roleName != null and roleName !=''">
+            AND r.name = #{roleName}
+        </if>
+        group by u.id, u.user_name,u.is_active,u.create_time,u.update_time
+        order by u.id desc
+        limit #{pageNumber},#{pageSize}
+    </select>
+
+
+</mapper>

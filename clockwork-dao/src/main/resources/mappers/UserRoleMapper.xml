@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.UserRoleMapper">
+
+    <!-- 列表分页count -->
+    <select id="countAllRoleByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkRolePojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM tb_clockwork_role r
+        WHERE 1=1
+        <if test="name != null and name !=''">
+            AND r.name = #{name}
+        </if>
+
+        <if test="userName != null and userName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_user_role ur LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.`id`
+            WHERE r.`id`=ur.role_id and u.user_name= #{userName}
+            )
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllRoleByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkRolePojo">
+        SELECT r.id, r.name,r.is_admin isAdmin,r.`description`,r.create_time createTime,r.update_time updateTime,
+        group_concat(u.`user_name`) userName
+        FROM tb_clockwork_role r
+        LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.role_id
+        LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.`id`
+        WHERE 1=1
+        <if test="name != null and name !=''">
+            AND r.name = #{name}
+        </if>
+
+        <if test="userName != null and userName !=''">
+            and u.user_name= #{userName}
+        </if>
+        GROUP BY r.id, r.name,r.is_admin,r.`description`,r.create_time,r.update_time
+        ORDER BY r.id DESC
+        LIMIT #{pageNumber},#{pageSize}
+    </select>
+
+    <select id="selectRoleByUserId"
+            parameterType="java.lang.Integer"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkRolePojo">
+        SELECT r.id, r.name,r.is_admin isAdmin,r.`description`,r.create_time createTime,r.update_time updateTime
+        FROM tb_clockwork_role r
+        LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.role_id
+        WHERE ur.user_id = ${_parameter}
+    </select>
+
+
+</mapper>

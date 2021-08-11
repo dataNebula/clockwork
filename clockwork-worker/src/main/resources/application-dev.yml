@@ -1,0 +1,30 @@
+####################################################################################################################
+####################################################   DEV环境配置   ################################################
+####################################################################################################################
+
+# 用于存放任务运行日志
+task.run.log.dir: logs
+
+# process task's thread pool num
+task.thread.pool.num.routine: 100
+task.thread.pool.num.rerun: 25
+task.thread.pool.num.kill: 3
+
+
+# 检查已经被杀死的作业状态线程的时间周期，单位为秒
+task.killed.check.time: 60
+
+# 作业被杀死后，超过这个时间状态没有变化，则强制设置状态为已杀死
+task.killed.timeout.time: 120
+
+# 节点是否同步文件（从dfs下载）
+node.synchronize.files: true
+
+# 节点构建命令的方式
+node.build.command.type: default
+
+eureka:
+  client.serviceUrl.defaultZone: http://t5:8761/eureka/
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}

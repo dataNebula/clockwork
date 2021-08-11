@@ -1,0 +1,448 @@
+html {
+  color: #000;
+  background: #fff;
+}
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+fieldset,
+img {
+  border: 0;
+}
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+  font-style: normal;
+  font-weight: normal;
+}
+ol,
+ul {
+  list-style: none;
+}
+caption,
+th {
+  text-align: left;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+q:before,
+q:after {
+  content: "";
+}
+abbr,
+acronym {
+  border: 0;
+}
+* {
+  margin: 0px;
+  padding: 0px;
+}
+a {
+  text-decoration: none;
+  color: #000000;
+  font-size: 15px;
+  /*字体*/
+}
+li {
+  list-style: none;
+}
+input,
+img {
+  border: none;
+}
+
+ul li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+/* 头部header */
+.header {
+  background-color: #333;
+}
+
+/* 菜单栏 左侧sidebar */
+
+/* 操作项图标 */
+.operate-block {
+  em {
+    display: inline-block;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #bbc6d1;
+    color: #fff;
+    text-align: center;
+    font-size: 0;
+    font-weight: bolder;
+    margin-right: 6px;
+
+    i {
+      font-size: 16px;
+      line-height: 24px;
+      display: inline-block;
+      font-family: Ionicons;
+      speak: none;
+      font-style: normal;
+      font-weight: 400;
+      font-variant: normal;
+      text-transform: none;
+      text-rendering: auto;
+      vertical-align: middle;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background: #006efe;
+    }
+  }
+}
+
+.operate-ul {
+  width: 100%;
+
+  li {
+    margin: 4px 0;
+
+    &:hover {
+      cursor: pointer;
+      color: #006efe;
+    }
+
+    font-size: 13px;
+  }
+}
+
+//间距
+.marT15 {
+  margin-top: 15px;
+}
+
+.marT20 {
+  margin-top: 20px;
+}
+
+.marT10 {
+  margin-top: 10px;
+}
+
+.marR10 {
+  margin-right: 10px;
+}
+
+.marR15 {
+  margin-right: 15px;
+}
+
+.marR20 {
+  margin-right: 20px;
+}
+
+.marB15 {
+  margin-bottom: 15px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  content: "";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  *zoom: 1;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+/* 搜索条件 */
+.form_item {
+  display: inline-block;
+  padding-right: 15px;
+}
+.lableText {
+  font-size: 12px;
+  color: #606266;
+  display: inline-block;
+  padding-right: 5px;
+  min-width: 80px;
+  text-align: right;
+}
+.box_l {
+  float: left;
+  width: 65%;
+  position: relative;
+  .inner_contain {
+    width: calc(100% - 100px) !important;
+  }
+  .el-date-editor.el-input,
+  .el-date-editor.el-input__inner {
+    width: 90%;
+  }
+}
+.box_r {
+  border-left: 1px solid #dcdfe6;
+  float: right;
+}
+.handle-box {
+  margin-bottom: 20px;
+}
+
+.handle-input {
+  // width: calc(100% - 35px) !important;
+  width: 90%;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+.moreBtn {
+  position: absolute;
+  right: 3%;
+  top: 0;
+}
+.upBtn {
+  position: absolute;
+  right: 3%;
+  bottom: 18px;
+}
+
+//菜单
+.el-submenu .el-menu-item {
+  min-width: inherit !important;
+}
+
+.el-menu-item {
+  color: hsla(0, 0%, 100%, 0.7) !important;
+}
+
+.el-menu-item.is-active {
+  //父级（无子集）
+  background: #363e4f !important;
+  color: #2d8cf0 !important;
+}
+
+.el-submenu__title {
+  //标题
+  color: hsla(0, 0%, 100%, 0.7) !important;
+
+  i {
+    color: hsla(0, 0%, 100%, 0.7) !important;
+  }
+}
+
+.is-active {
+  // 当前 父级（有子集）
+  .el-submenu__title {
+    color: hsla(0, 0%, 100%, 1) !important;
+
+    i {
+      color: hsla(0, 0%, 100%, 1) !important;
+    }
+  }
+
+  .el-menu-item {
+    color: hsla(0, 0%, 100%, 1) !important;
+  }
+
+  .is-active {
+    //当前的子集
+    color: #2d8cf0 !important;
+  }
+}
+
+.el-menu-item.i:hover,
+.el-submenu .el-submenu__title:hover {
+  color: #fff !important;
+
+  i {
+    color: #fff !important;
+  }
+}
+
+.el-submenu__title,
+.el-menu-item {
+  font-size: 14px;
+}
+
+.el-submenu__title i {
+  font-size: 18px;
+  margin-right: 5px;
+}
+
+.el-menu-item i {
+  font-size: 22px;
+  margin-right: 5px;
+}
+
+.lineheight .el-input__inner {
+  line-height: normal;
+}
+
+.crumbs {
+  margin-bottom: 20px;
+}
+
+.pagination {
+  margin: 20px 0;
+  text-align: right;
+}
+
+.plugins-tips {
+  padding: 20px 10px;
+  margin-bottom: 20px;
+}
+
+.el-button + .el-tooltip {
+  margin-left: 10px;
+}
+.el-button {
+  font-size: 12px;
+}
+
+/*BaseForm*/
+.form-box {
+  width: 600px;
+}
+
+.form-box .line {
+  text-align: center;
+}
+
+.el-time-panel__content::after,
+.el-time-panel__content::before {
+  margin-top: -7px;
+}
+
+/*Readme*/
+.ms-doc .el-checkbox__input.is-disabled + .el-checkbox__label {
+  color: #333;
+  cursor: pointer;
+}
+
+/*Upload*/
+.pure-button {
+  width: 150px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  color: #fff;
+  border-radius: 3px;
+}
+
+.g-core-image-corp-container .info-aside {
+  height: 45px;
+}
+
+.el-upload--text {
+  background-color: #fff;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  box-sizing: border-box;
+  height: 180px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.el-upload--text .el-icon-upload {
+  font-size: 67px;
+  color: #97a8be;
+  margin: 40px 0 16px;
+  line-height: 50px;
+}
+
+.el-upload--text {
+  color: #97a8be;
+  font-size: 12px;
+  text-align: center;
+}
+
+.el-upload--text em {
+  font-style: normal;
+}
+
+/*VueEditor*/
+.ql-container {
+  min-height: 400px;
+}
+
+.ql-snow .ql-tooltip {
+  transform: translateX(117.5px) translateY(10px) !important;
+}
+
+.editor-btn {
+  margin-top: 20px;
+}
+.el-form-item__label,
+.el-input__inner {
+  font-size: 12px;
+  font-weight: normal;
+}
+//穿梭框
+#transfer {
+  position: relative;
+}
+#transfer .el-form-item {
+  position: absolute;
+  top: 45px;
+  right: -4px;
+  width: 70px !important;
+}
+#transfer .el-button {
+  padding: 10px 20px;
+}
+#transfer .el-pagination {
+  line-height: normal !important;
+  padding: 10px 0 !important;
+}

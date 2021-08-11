@@ -1,0 +1,35 @@
+####################################################################################################################
+####################################################   DEV环境配置   ################################################
+####################################################################################################################
+
+spring:
+    datasource:
+        name: clockwork
+        url: jdbc:mysql://127.0.0.1:3306/adx_clockwork?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        username: adx_clockwork
+        password: adx_clockwork
+        driver-class-name: com.mysql.jdbc.Driver
+        initialSize: 50
+        maxActive: 50
+        minIdle: 50
+        maxWait: 30000
+        validationQuery: SELECT 1
+        testOnBorrow: true
+        testOnReturn: true
+        testWhileIdle: true
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 25200000
+        removeAbandoned: true
+        removeAbandonedTimeout: 1800
+        logAbandoned: true
+        filters: mergeStat
+
+mybatis:
+    type-aliases-package: com.creditease.adx.clockwork.common.entity.gen
+    mapperLocations:
+        - classpath*:mappers/*.xml
+        - classpath*:mappers/clockwork/*.xml
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true

@@ -1,0 +1,56 @@
+####################################################################################################################
+####################################################   DEV环境配置   ################################################
+####################################################################################################################
+
+spring.profiles.include: dao-dev
+
+spring:
+    kafka:
+        task.record:
+            log.enable: true
+            lifecycle.enable: false
+            topic: adx_clockwork_life_cycle_record
+            consanguinity-analysis-topic: consanguinity_analysis_topic
+        bootstrap-servers: node10.adx.test.com:6667,node11.adx.test.com:6667,node12.adx.test.com:6667
+        properties:
+            security.protocol: SASL_PLAINTEXT
+
+# kerberos
+java:
+    security:
+        krb5:
+            enable: false
+            conf: /data/adx/clockwork/api/krb5.conf
+        auth:
+            login:
+                config: /data/adx/clockwork/api/c32_kafka_client_jaas.conf
+
+# 管理员是否需要审核参数
+administrator.review.task: false
+
+# 任务失败最大尝试次数
+task.failed.retries.max.number: 2
+
+# 批量创建任务时钟数
+task.batch.add.loopclock.slot.num: 200
+
+# 上传脚本文件的全路径必须是以这个路径为前缀的，防止使用其它文件夹
+task.upload.path.prefix:
+    /user/adx/clockwork/dfs/shell/,
+    /user/adx/triangle/runTimeDir/shell/,
+    /opt/program/warehouse/,
+    /opt/program/warehouse2/,
+    /opt/program/warehouse3/,
+    /opt/
+
+vesta.machine: 1
+
+eureka:
+    client.serviceUrl.defaultZone: http://t5:8761/eureka/
+    instance:
+        preferIpAddress: true
+        instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+
+logging:
+    level:
+        com.creditease.adx.clockwork.dao.mapper: info

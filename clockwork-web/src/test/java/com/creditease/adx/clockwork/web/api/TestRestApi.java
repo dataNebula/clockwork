@@ -1,0 +1,93 @@
+/*-
+ *  
+ * Clockwork
+ *  
+ * Copyright (C) 2019 - 2020 adx
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *  
+ */
+
+package com.creditease.adx.clockwork.web.api;
+
+import org.junit.Test;
+
+/**
+ * @ Author     ：XuanDongTang
+ * @ Date       ：Created in 13:21 2019-06-28
+ * @ Description：TestRestApi,需要启动clockwork-user
+ * @ Modified By：
+ */
+public class TestRestApi {
+
+    @Test
+    public void abc() {
+
+        for (int i = 0; i < 10; i++) {
+            try {
+
+                if (i % 2 == 0) {
+                    System.out.println("1111");
+                    continue;
+                }
+
+            } catch (Exception e) {
+
+            } finally {
+                System.out.println("2222");
+            }
+        }
+
+
+    }
+
+    /**
+     * 1. UserController.getOrgInfoByEmail()
+     */
+    @Test
+    public void TestGetOrgInfoByEmail() throws Exception {
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("email", "xuandongtang@clockwork.com");
+//
+//        log.info("==================");
+//        String result = HttpUtils.post("http://localhost:9009/clockwork/web/getOrgInfoByEmail", params);
+//        log.info(result);
+//        log.info("==================");
+
+    }
+
+    /**
+     * 2. UserController.checkUser()
+     */
+    @Test
+    public void TestCheckUser() throws Exception {
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("username", "xuandongtang@clockwork.com");
+//        params.put("password", "xxx");
+//
+//
+//        log.info("==================");
+//        String result = HttpUtils.post("http://localhost:9009/clockwork/web/checkUser", params);
+//        log.info(result);
+//        log.info("==================");
+
+    }
+
+
+
+
+
+
+
+
+}

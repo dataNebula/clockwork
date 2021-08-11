@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TaskRerunMapper">
+
+    <!-- 列表分页count -->
+    <select id="countAllTaskRerunByPageParam"
+            parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT COUNT(*) num
+        FROM tb_clockwork_task_rerun r
+        LEFT JOIN tb_clockwork_task_log l ON r.`task_id`=l.`task_id` AND r.`rerun_batch_number`=l.`rerun_batch_number`
+        LEFT JOIN tb_clockwork_task t ON r.task_id = t.id
+        WHERE 1=1
+        <if test="taskId != null">
+            AND r.task_id = #{taskId}
+        </if>
+        <if test="taskName != null and taskName !=''">
+            AND r.task_name LIKE '%${taskName}%'
+        </if>
+        <if test="operatorName != null and operatorName !=''">
+            AND r.operator_name = #{operatorName}
+        </if>
+        <if test="rerunBatchNumber != null and rerunBatchNumber !=''">
+            AND r.rerun_batch_number = #{rerunBatchNumber}
+        </if>
+        <if test="startTime != null">
+            AND r.create_time <![CDATA[ >= ]]> '${startTime}'
+        </if>
+        <if test="endTime != null">
+            AND (r.create_time is null or r.create_time <![CDATA[ <= ]]> '${endTime}')
+        </if>
+        <if test="executeType != null">
+            AND l.execute_type = #{executeType}
+        </if>
+        <if test="createUser != null">
+            AND t.create_user = #{createUser}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllTaskRerunByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTaskRerun4PagePojo">
+        SELECT r.id, r.task_id taskId, r.task_name taskName ,r.group_id groupId,r.parameter,r.is_first
+        isFirst,r.rerun_batch_number rerunBatchNumber,r.operator_name operatorName,r.`update_time` updateTime,
+        l.id logId,l.`execute_type` executeType,l.status, l.`is_end` isEnd,l.`node_id` nodeId,l.`pid`,
+        l.log_name logName, l.`start_time` startTime, l.`running_time` runningTime,l.`execute_time` executeTime,
+        l.`end_time` endTime,l.`create_time` createTime,
+        n.ip nodeIp, n.port nodePort
+        FROM tb_clockwork_task_rerun r
+        LEFT JOIN tb_clockwork_task_log l ON r.`task_id`=l.`task_id` AND r.`rerun_batch_number`=l.`rerun_batch_number`
+        LEFT JOIN tb_clockwork_task t ON r.task_id = t.id
+        LEFT JOIN tb_clockwork_node n ON l.node_id = n.id
+        WHERE 1=1
+        <if test="taskId != null">
+            AND r.task_id = #{taskId}
+        </if>
+        <if test="taskName != null and taskName !=''">
+            AND r.task_name LIKE '%${taskName}%'
+        </if>
+        <if test="operatorName != null and operatorName !=''">
+            AND r.operator_name = #{operatorName}
+        </if>
+        <if test="rerunBatchNumber != null and rerunBatchNumber !=''">
+            AND r.rerun_batch_number = #{rerunBatchNumber}
+        </if>
+        <if test="startTime != null">
+            AND r.create_time <![CDATA[ >= ]]> '${startTime}'
+        </if>
+        <if test="endTime != null">
+            AND (r.create_time is null or r.create_time <![CDATA[ <= ]]> '${endTime}')
+        </if>
+        <if test="executeType != null">
+            AND l.execute_type = #{executeType}
+        </if>
+        <if test="createUser != null">
+            AND t.create_user = #{createUser}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        ORDER BY l.id DESC
+        limit #{pageNumber},#{pageSize}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,67 @@
+spring:
+    http-client:
+        pool:
+            maxTotalConnect: 1000
+            maxConnectPerRoute: 200
+            connectTimeout: 3000
+            readTimeout: 30000
+            connectionRequestTimout: 200
+            retryTimes: 3
+            charset: UTF-8
+            keepAliveTime: 10
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 50000
+
+ADX-CLOCKWORK-API:
+    ribbon:
+        ReadTimeout: 180000
+        ConnectTimeout: 3000
+        OkToRetryOnAllOperations: false # 对所有操作请求都进行重试,默认false
+        MaxAutoRetries: 1     # 对当前实例的重试次数，默认0
+        MaxAutoRetriesNextServer: 1 # 对切换实例的重试次数，默认1
+
+ADX-CLOCKWORK-DFS:
+    ribbon:
+        ReadTimeout: 180000
+        ConnectTimeout: 3000
+        OkToRetryOnAllOperations: false # 对所有操作请求都进行重试,默认false
+        MaxAutoRetries: 1     # 对当前实例的重试次数，默认0
+        MaxAutoRetriesNextServer: 1 # 对切换实例的重试次数，默认1
+
+ADX-CLOCKWORK-WORKER:
+    ribbon:
+        ReadTimeout: 180000
+        ConnectTimeout: 3000
+        OkToRetryOnAllOperations: false # 对所有操作请求都进行重试,默认false
+        MaxAutoRetries: 1     # 对当前实例的重试次数，默认0
+        MaxAutoRetriesNextServer: 1 # 对切换实例的重试次数，默认1
+
+ADX-CLOCKWORK-MASTER:
+    ribbon:
+        ReadTimeout: 180000
+        ConnectTimeout: 3000
+        OkToRetryOnAllOperations: false # 对所有操作请求都进行重试,默认false
+        MaxAutoRetries: 1     # 对当前实例的重试次数，默认0
+        MaxAutoRetriesNextServer: 1 # 对切换实例的重试次数，默认1
+
+ADX-CLOCKWORK-WEB:
+    ribbon:
+        ReadTimeout: 180000
+        ConnectTimeout: 3000
+        OkToRetryOnAllOperations: false # 对所有操作请求都进行重试,默认false
+        MaxAutoRetries: 1     # 对当前实例的重试次数，默认0
+        MaxAutoRetriesNextServer: 1 # 对切换实例的重试次数，默认1
+
+ribbon:
+    eureka:
+        enabled: true
+
+api.service.name: "ADX-CLOCKWORK-API"
+web.service.name: "ADX-CLOCKWORK-WEB"
+dfs.service.name: "ADX-CLOCKWORK-DFS"
+worker.service.name: "ADX-CLOCKWORK-WORKER"
+master.service.name: "ADX-CLOCKWORK-MASTER"
+
+logging:
+    level:
+        io.swagger.models.parameters.AbstractSerializableParameter: error

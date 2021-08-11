@@ -1,0 +1,28 @@
+####################################################################################################################
+####################################################   DEV环境配置   ################################################
+####################################################################################################################
+
+spring.profiles.include: dao-dev
+
+# 是否使用ldap登陆
+ldap: true
+spring.ldap:
+    urls: ldap://127.0.0.1
+    username: Clockwork
+    password: Clockwork
+    base: DC=Clockwork,DC=corp
+    queryBase: OU=Clockwork,ou=HABROOT
+
+eureka:
+    client.serviceUrl.defaultZone: http://t5:8761/eureka/
+    instance:
+        preferIpAddress: true
+        instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+
+jwt:
+    accessToken.timeout: 60
+    refreshToken.timeout: 120
+
+logging:
+    level:
+        com.creditease.adx.clockwork.dao.mapper: debug

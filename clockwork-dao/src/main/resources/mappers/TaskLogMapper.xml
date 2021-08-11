@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.TaskLogMapper">
+
+    <!-- 列表分页count -->
+    <select id="countAllTaskLogByPageParam"
+            parameterType="java.util.Map"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON l.task_id = t.id
+        LEFT JOIN tb_clockwork_task_group g ON l.group_id = g.id
+        WHERE 1=1
+        <if test="id != null">
+            AND l.id = #{id}
+        </if>
+        <if test="taskId != null">
+            AND l.task_id = #{taskId}
+        </if>
+        <if test="taskName != null and taskName !=''">
+            AND l.task_name LIKE '%${taskName}%'
+        </if>
+        <if test="status != null">
+            AND l.status = #{status}
+        </if>
+        <if test="isEnd != null">
+            AND l.is_end = #{isEnd}
+        </if>
+        <if test="executeType != null">
+            AND l.execute_type = #{executeType}
+        </if>
+        <if test="startTime != null">
+            AND l.start_time <![CDATA[ >= ]]> '${startTime}'
+        </if>
+        <if test="endTime != null">
+            and (l.execute_time is null or l.execute_time <![CDATA[ <= ]]> '${endTime}')
+        </if>
+        <if test="rerunBatchNumber != null">
+            AND l.rerun_batch_number = #{rerunBatchNumber}
+        </if>
+        <if test="taskGroupName != null and taskGroupName !=''">
+            AND g.name like '%${taskGroupName}%'
+        </if>
+        <if test="taskGroupAliasName != null and taskGroupAliasName !=''">
+            AND g.alias_name like '%${taskGroupAliasName}%'
+        </if>
+        <if test="externalId != null">
+            AND g.external_id = #{externalId}
+        </if>
+        <if test="source != null">
+            AND t.source = #{source}
+        </if>
+        <if test="taskAliasName != null and taskAliasName !=''">
+            AND t.alias_name LIKE '%${taskAliasName}%'
+        </if>
+        <if test="createUser != null">
+            AND t.create_user = #{createUser}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllTaskLogByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkTaskLogPojo">
+
+        SELECT
+        l.id,l.task_id taskId,l.task_name taskName,l.node_id nodeId,l.status,l.pid,l.real_command realCommand,
+        l.return_code returnCode,l.log_name logName,l.start_time startTime,l.execute_time executeTime,
+        l.end_time endTime, l.execute_type executeType,l.rerun_batch_number rerunBatchNumber,
+        l.fill_data_time fillDataTime, l.return_msg returnMsg,l.run_engine runEngine,l.group_id groupId,
+        l.batch_number batchNumber,l.parameter, l.create_time createTime,l.update_time updateTime, l.is_end isEnd,
+        g.name taskGroupName, g.alias_name taskGroupAliasName, g.external_id externalId,
+        t.source, t.alias_name taskAliasName, t.create_user createUser,
+        n.`id` nodeId, n.ip nodeIp, n.port nodePort
+        FROM tb_clockwork_task_log l
+        LEFT JOIN tb_clockwork_task t ON l.task_id = t.id
+        LEFT JOIN tb_clockwork_task_group g ON l.group_id = g.id
+        LEFT JOIN tb_clockwork_node n ON l.node_id = n.id
+        WHERE 1=1
+        <if test="id != null">
+            AND l.id = #{id}
+        </if>
+        <if test="taskId != null">
+            AND l.task_id = #{taskId}
+        </if>
+        <if test="taskName != null and taskName !=''">
+            AND l.task_name LIKE '%${taskName}%'
+        </if>
+        <if test="status != null">
+            AND l.status = #{status}
+        </if>
+        <if test="isEnd != null">
+            AND l.is_end = #{isEnd}
+        </if>
+        <if test="executeType != null">
+            AND l.execute_type = #{executeType}
+        </if>
+        <if test="startTime != null">
+            AND l.start_time <![CDATA[ >= ]]> '${startTime}'
+        </if>
+        <if test="endTime != null">
+            AND (l.execute_time is null or l.execute_time <![CDATA[ <= ]]> '${endTime}')
+        </if>
+        <if test="rerunBatchNumber != null">
+            AND l.rerun_batch_number = #{rerunBatchNumber}
+        </if>
+        <if test="taskGroupName != null and taskGroupName !=''">
+            AND g.name like '%${taskGroupName}%'
+        </if>
+        <if test="taskGroupAliasName != null and taskGroupAliasName !=''">
+            AND g.alias_name like '%${taskGroupAliasName}%'
+        </if>
+        <if test="externalId != null">
+            AND g.external_id = #{externalId}
+        </if>
+        <if test="source != null">
+            AND t.source = #{source}
+        </if>
+        <if test="taskAliasName != null and taskAliasName !=''">
+            AND t.alias_name LIKE '%${taskAliasName}%'
+        </if>
+        <if test="createUser != null">
+            AND t.create_user = #{createUser}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=t.create_user AND r.name in ( ${roleName} ) )
+        </if>
+        ORDER BY l.id DESC
+        limit #{pageNumber},#{pageSize}
+    </select>
+
+</mapper>

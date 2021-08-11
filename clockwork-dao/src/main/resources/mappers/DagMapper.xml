@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.DagMapper">
+
+    <!-- 列表分页count -->
+    <select id="selectEmptyDagInfo" resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkDagPojo">
+        SELECT
+        d.id, d.name, d.`leader_task_id` leaderTaskId, d.`leader_task_name`
+        leaderTaskName,d.`task_count` taskCount,d.`description`,d.`create_time` createTime,d.`update_time` updateTime
+        FROM tb_clockwork_dag d
+        WHERE Not exists (select 1 from tb_clockwork_task t where t.`dag_id` = d.id)
+    </select>
+
+
+    <!-- 列表分页count -->
+    <select id="countAllDagByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkDagPojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM
+        tb_clockwork_dag d
+        WHERE 1=1
+        <if test="id != null">
+            and d.id = #{id}
+        </if>
+        <if test="name != null and name !='' and name != 'NaN'">
+            and d.name like '%${name}%'
+        </if>
+        <if test="leaderTaskId != null and leaderTaskId !=''">
+            and (d.leader_task_id = #{leaderTaskId}
+            or d.id in (
+            select t.`dag_id` from tb_clockwork_task t where t.id = #{leaderTaskId} group by t.`dag_id`
+            )
+            )
+        </if>
+        <if test="leaderTaskName != null and leaderTaskName !='' and leaderTaskName != 'NaN'">
+            and (d.leader_task_name like '%${leaderTaskName}%'
+            or d.id in (
+            select t.`dag_id` from tb_clockwork_task t where t.name like '%${leaderTaskName}%' group by t.`dag_id`
+            )
+            )
+        </if>
+
+    </select>
+
+
+    <!-- 列表分页 -->
+    <select id="selectAllDagByPageParam"
+            parameterType="java.util.Map"
+            resultType="com.creditease.adx.clockwork.common.pojo.TbClockworkDagPojo">
+        SELECT
+        d.id, d.name, d.`leader_task_id` leaderTaskId, d.`leader_task_name`
+        leaderTaskName,d.`task_count` taskCount,d.`description`,d.`create_time` createTime,d.`update_time` updateTime
+        FROM
+        tb_clockwork_dag d
+        WHERE 1=1
+        <if test="id != null">
+            and d.id = #{id}
+        </if>
+        <if test="name != null and name !='' and name != 'NaN'">
+            and d.name like '%${name}%'
+        </if>
+        <if test="leaderTaskId != null and leaderTaskId !=''">
+            and (d.leader_task_id = #{leaderTaskId}
+            or d.id in (
+            select t.`dag_id` from tb_clockwork_task t where t.id = #{leaderTaskId} group by t.`dag_id`
+            )
+            )
+        </if>
+        <if test="leaderTaskName != null and leaderTaskName !='' and leaderTaskName != 'NaN'">
+            and (d.leader_task_name like '%${leaderTaskName}%'
+            or d.id in (
+            select t.`dag_id` from tb_clockwork_task t where t.name like '%${leaderTaskName}%' group by t.`dag_id`
+            )
+            )
+        </if>
+        order by d.id desc
+        limit #{pageNumber},#{pageSize}
+    </select>
+
+    <!-- 更新DAG TaskCount字段 -->
+    <update id="updateDagCount">
+        UPDATE tb_clockwork_dag d
+        LEFT JOIN (SELECT dag_id,count(*) cnt FROM tb_clockwork_task GROUP BY dag_id) t ON d.id=t.dag_id
+        SET d.task_count=cnt
+        WHERE d.task_count != t.cnt
+    </update>
+
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration debug="false" scan="true" scanPeriod="5 minutes">
+    <contextName>clockwork</contextName>
+
+    <!-- 日志文件存储路径 -->
+    <property name="LOG_HOME" value="logs/"/>
+
+    <!-- 控制台输出 -->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | %thread | %-5level | %logger{36}\(%line\) | %msg%n</pattern>
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%-5p] %c (%F:%L) - %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- This is MDC value -->
+    <!-- We will assign a value to 'logFileName' via Java code -->
+    <appender name="file-thread" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>logFileName</key>
+            <defaultValue>clockwork</defaultValue>
+        </discriminator>
+        <sift>
+            <!-- A standard RollingFileAppender, the log file is based on 'logFileName' at runtime  -->
+            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <Pattern>
+                        %date{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %logger{36}\(%line\) | %msg%n
+                    </Pattern>
+                </encoder>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/${logFileName}.log</fileNamePattern>
+                    <maxHistory>30</maxHistory>
+                </rollingPolicy>
+
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- sh log out -->
+    <appender name="_sh-thread" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>logFileName</key>
+            <defaultValue>clockwork</defaultValue>
+        </discriminator>
+        <sift>
+            <!-- A standard RollingFileAppender, the log file is based on 'logFileName' at runtime  -->
+            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <Pattern>
+                        %date{yyyy-MM-dd HH:mm:ss.SSS} | %thread | %msg%n
+                    </Pattern>
+                </encoder>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/${logFileName}.log</fileNamePattern>
+                    <maxHistory>30</maxHistory>
+                </rollingPolicy>
+
+            </appender>
+        </sift>
+    </appender>
+
+    <logger name="sh-thread" level="info" additivity="false">
+        <appender-ref ref="_sh-thread" />
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="file-thread"/>
+    </root>
+</configuration>

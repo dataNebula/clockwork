@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.adx.clockwork.dao.mapper.DagRangeCheckMapper">
+
+    <!-- 列表分页count -->
+    <select id="countAllLogsByPageParam"
+            parameterType="com.creditease.adx.clockwork.common.pojo.TbClockworkDagRangeCheckPojo"
+            resultType="java.lang.Integer">
+        SELECT count(*) num
+        FROM
+        tb_clockwork_dag_range_check d
+        WHERE 1=1
+        <if test="id != null">
+            and d.id = #{id}
+        </if>
+        <if test="dagId != null">
+            AND d.dag_id = #{dagId}
+        </if>
+<!--        <if test="checkType != null">-->
+<!--            AND d.check_type = #{checkType}-->
+<!--        </if>-->
+        <if test="operator != null">
+            AND d.operator like '%${operator}%'
+        </if>
+<!--        <if test="operatorDep != null">-->
+<!--            AND d.operator_dep like '%${operatorDep}%'-->
+<!--        </if>-->
+        <if test="isRange != null">
+            AND d.is_range = #{isRange}
+        </if>
+        <if test="roleName != null and roleName !=''">
+            AND EXISTS (
+            SELECT 1 FROM tb_clockwork_role r
+            LEFT JOIN tb_clockwork_user_role ur ON r.`id`=ur.`role_id`
+            LEFT JOIN tb_clockwork_user u ON ur.`user_id`=u.id
+            WHERE u.`user_name`=d.operator AND r.name in (#{roleName}) )
+        </if>
+        <if test="beginDate != null ">
+            AND d.create_time <![CDATA[>=]]> #{beginDate}
+        </if>
+        <if test="endDate != null ">
+            AND d.create_time <![CDATA[<=]]>#{endDate}
+        </if>
+    </select>
+
+
+</mapper>
